@@ -20,9 +20,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDTO) {
-        if (userDTO.email() == null) {
+        if (userDTO.getEmail() == null) {
             throw new ValidationException("Почта не может быть пустой.");
-        } else if (!userDTO.email().contains("@")) {
+        } else if (!userDTO.getEmail().contains("@")) {
             throw new ValidationException("Неверный формат почты.");
         }
         User user = repository.createUser(mapper.fromDTO(userDTO));
