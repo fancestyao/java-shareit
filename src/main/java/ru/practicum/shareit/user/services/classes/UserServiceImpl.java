@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.services.classes;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mappers.UserMapper;
 import ru.practicum.shareit.user.models.User;
@@ -20,11 +19,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDTO) {
-        if (userDTO.getEmail() == null) {
-            throw new ValidationException("Почта не может быть пустой.");
-        } else if (!userDTO.getEmail().contains("@")) {
-            throw new ValidationException("Неверный формат почты.");
-        }
         User user = repository.createUser(mapper.fromDTO(userDTO));
         return mapper.toDTO(user);
     }

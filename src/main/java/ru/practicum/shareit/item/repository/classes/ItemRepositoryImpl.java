@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.repository.classes;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.models.Item;
 import ru.practicum.shareit.item.repository.interfaces.ItemRepository;
 
@@ -15,18 +14,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
     private final Map<Long, Item> items = new HashMap<>();
+    private final Map<Long, List<Item>> itemsOfUser = new HashMap<>();
     private Long id = 1L;
 
     @Override
     public Item createItem(Item item) {
-        itemValidation(item);
         item.setId(id++);
         items.put(item.getId(), item);
+        itemsOfUser.computeIfAbsent(item.getUser().getId(), i -> new ArrayList<>()).add(item);
         return item;
     }
 
     @Override
-    public Item getItemById(long itemId) {
+    public Item getItemById(Long itemId) {
         if (items.containsKey(itemId))
             return items.get(itemId);
         return null;
@@ -35,12 +35,14 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item updateItem(Item item) {
         items.put(item.getId(), item);
+        itemsOfUser.computeIfAbsent(item.getUser().getId(), i -> new ArrayList<>()).remove(item);
+        itemsOfUser.computeIfAbsent(item.getUser().getId(), i -> new ArrayList<>()).add(item);
         return items.get(item.getId());
     }
 
     @Override
-    public List<Item> getListOfUserItems(long userId) {
-        return new ArrayList<>(items.values());
+    public List<Item> getListOfUserItems(Long userId) {
+        return itemsOfUser.get(userId);
     }
 
     @Override
@@ -55,14 +57,5 @@ public class ItemRepositoryImpl implements ItemRepository {
             }
         });
         return foundItems;
-    }
-
-    private void itemValidation(Item item) {
-        if (item.getName() == null
-                || item.getName().equals("")
-                || item.getDescription() == null
-                || item.getAvailable() == null) {
-            throw new ValidationException("Проблема с вещью.");
-        }
     }
 }
