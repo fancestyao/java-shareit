@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
-    private final static String CUSTOMER_ID_HEADER = "X-Sharer-User-Id";
+    private static final String CUSTOMER_ID_HEADER = "X-Sharer-User-Id";
     private final ItemService itemService;
 
     @GetMapping
