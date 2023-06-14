@@ -13,7 +13,6 @@ import ru.practicum.shareit.user.repository.interfaces.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
         if (user == null) {
             throw new NotFoundException("Пользователь не найден.");
         } else {
-            newItem.setOwner(userId);
+            newItem.setUser(user);
         }
         Item createdItem = itemRepository.createItem(newItem);
         return itemMapper.toDTO(createdItem);
@@ -40,17 +39,19 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getUserItems(Long userId) {
         return new ArrayList<>(itemRepository.getListOfUserItems(userId))
                 .stream()
-                .filter(i -> Objects.equals(i.getOwner(), userId))
                 .map(itemMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public ItemDto updateItem(Long userId, ItemDto itemDTO, Long itemId) {
+        try {
+            userRepository.getUser(userId);
+        } catch (NullPointerException e) {
+            throw new NullPointerException();
+        }
         Item item = itemMapper.fromDTO(itemDTO);
-        userIdValidation(userId);
         Item oldItem = itemRepository.getItemById(itemId);
         itemOwnerValidation(item, oldItem, userId);
-        itemValidation(item, oldItem, userId);
         Item updatedItem = itemRepository.updateItem(oldItem);
         return itemMapper.toDTO(updatedItem);
     }
@@ -67,26 +68,8 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.listToDTO(list);
     }
 
-    private void itemValidation(Item item, Item oldItem, Long userId) {
-        if (!oldItem.getOwner().equals(userId)) {
-            throw new NotFoundException("Пользователь не является владельцем.");
-        } else if (item.getName() != null) {
-            oldItem.setName(item.getName());
-        } else if (item.getDescription() != null) {
-            oldItem.setDescription(item.getDescription());
-        } else if (item.getAvailable() != null) {
-            oldItem.setAvailable(item.getAvailable());
-        }
-    }
-
-    private void userIdValidation(Long userId) {
-        if (!userRepository.getAllUsers().contains(userRepository.getUser(userId))) {
-            throw new NotFoundException("Пользователя нет в системе.");
-        }
-    }
-
     private void itemOwnerValidation(Item item, Item oldItem, Long userId) {
-        if (!oldItem.getOwner().equals(userId)) {
+        if (!oldItem.getUser().getId().equals(userId)) {
             throw new NotFoundException("Данный пользователь не владеет этой вещью.");
         }
         if (item.getName() != null) {

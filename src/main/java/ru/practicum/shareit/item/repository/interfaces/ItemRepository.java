@@ -7,11 +7,11 @@ import java.util.List;
 public interface ItemRepository {
     Item createItem(Item item);
 
-    Item getItemById(long itemId);
+    Item getItemById(Long itemId);
 
     Item updateItem(Item item);
 
-    List<Item> getListOfUserItems(long userId);
+    List<Item> getListOfUserItems(Long userId);
 
     List<Item> findItem(String text);
 }

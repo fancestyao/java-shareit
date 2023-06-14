@@ -13,12 +13,6 @@ public class ExceptHandler {
         return notFoundException.getMessage();
     }
 
-    @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String validationExceptionHandler(ValidationException validationException) {
-        return validationException.getMessage();
-    }
-
     @ExceptionHandler(EmailValidationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String emailValidationException(EmailValidationException emailValidationException) {
