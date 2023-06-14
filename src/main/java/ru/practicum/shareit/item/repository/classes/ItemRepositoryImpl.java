@@ -40,7 +40,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> getListOfUserItems(long userId) {
-        return items.values().stream().toList();
+        return new ArrayList<>(items.values());
     }
 
     @Override

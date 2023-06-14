@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.services.interfaces.ItemService;
 import ru.practicum.shareit.user.models.User;
 import ru.practicum.shareit.user.repository.interfaces.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,7 +38,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getUserItems(Long userId) {
-        return itemRepository.getListOfUserItems(userId).stream().toList().stream().filter(i -> Objects.equals(i.getOwner(), userId)).map(itemMapper::toDTO).collect(Collectors.toList());
+        return new ArrayList<>(itemRepository.getListOfUserItems(userId))
+                .stream()
+                .filter(i -> Objects.equals(i.getOwner(), userId))
+                .map(itemMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
