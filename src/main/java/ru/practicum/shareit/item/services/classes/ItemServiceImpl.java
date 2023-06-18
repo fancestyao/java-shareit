@@ -44,11 +44,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(Long userId, ItemDto itemDTO, Long itemId) {
-        try {
-            userRepository.getUser(userId);
-        } catch (NullPointerException e) {
-            throw new NullPointerException();
-        }
         Item item = itemMapper.fromDTO(itemDTO);
         Item oldItem = itemRepository.getItemById(itemId);
         itemOwnerValidation(item, oldItem, userId);

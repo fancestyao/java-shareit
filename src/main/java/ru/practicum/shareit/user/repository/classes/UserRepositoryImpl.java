@@ -32,7 +32,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User getUser(long userId) {
         if (users.containsKey(userId))
             return users.get(userId);
-        return null;
+        throw new NotFoundException("Пользователь не найден.");
     }
 
     @Override
