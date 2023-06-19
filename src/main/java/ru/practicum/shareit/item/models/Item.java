@@ -1,24 +1,19 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import ru.practicum.shareit.user.models.User;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ItemDto {
+public class Item {
     private Long id;
-    @NotNull
-    @NotBlank
+    private User user;
     private String name;
-    @NotNull
     private String description;
-    @NotNull
     private Boolean available;
 }
