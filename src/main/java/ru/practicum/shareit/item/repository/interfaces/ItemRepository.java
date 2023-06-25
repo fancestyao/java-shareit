@@ -1,17 +1,35 @@
 package ru.practicum.shareit.item.repository.interfaces;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.item.dto.ItemToRequestDto;
 import ru.practicum.shareit.item.models.Item;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface ItemRepository {
-    Item createItem(Item item);
+@Repository
+public interface ItemRepository extends JpaRepository<Item, Long> {
+    List<Item> findItemsByUserIdOrderByIdAsc(Long userId);
 
-    Item getItemById(Long itemId);
+    @Query("select i "
+            + "from Item as i "
+            + "join fetch i.user as o where i.id = :itemId and o.id = :userId")
+    Item findItemByIdAndOwnerId(@Param("itemId") Long itemId, @Param("userId") Long ownerId);
 
-    Item updateItem(Item item);
+    @Query("select i "
+            + "from Item as i "
+            + "where lower(i.name) like lower(concat('%', :search, '%')) "
+            + "or lower(i.description) like lower(concat('%', :search,'%')) and i.available != false ")
+    Optional<List<Item>> search(@Param("search") String searchString);
 
-    List<Item> getListOfUserItems(Long userId);
+    Optional<Item> getItemByIdAndUserId(Long itemId, Long userId);
 
-    List<Item> findItem(String text);
+    @Query("select new ru.practicum.shareit.item.dto.ItemToRequestDto(i.id, i.name, i.description, i.available" +
+            ", i.request.id) " +
+            "from Item as i " +
+            "where i.request.id IN :requestsId")
+    List<ItemToRequestDto> findAllByRequests(@Param("requestsId") List<Long> requestsId);
 }
