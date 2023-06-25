@@ -10,6 +10,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class ItemRepositoryImpl {
+
     private final Map<Long, Item> items = new HashMap<>();
     private final Map<Long, List<Item>> itemsOfUser = new HashMap<>();
     private Long id = 1L;
