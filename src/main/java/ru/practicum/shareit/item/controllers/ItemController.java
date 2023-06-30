@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoInput;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Slf4j
 public class ItemController {
     private static final String CUSTOMER_ID_HEADER = "X-Sharer-User-Id";
     private final ItemService itemService;
@@ -21,7 +23,7 @@ public class ItemController {
     @GetMapping
     public List<ItemDtoWithBooking> getUserItems(@RequestHeader(CUSTOMER_ID_HEADER) Long userId) {
         List<ItemDtoWithBooking> result = itemService.getUserItems(userId);
-        System.out.println(result);
+        log.info("Предметы пользователя получены.");
         return result;
     }
 
@@ -29,7 +31,7 @@ public class ItemController {
     public ItemDto createItem(@RequestHeader(CUSTOMER_ID_HEADER) Long userId,
                               @Valid @RequestBody ItemDto itemDto) {
         ItemDto result = itemService.createItem(userId, itemDto);
-        System.out.println(result);
+        log.info("Предмет сохранен.");
         return result;
     }
 
@@ -37,7 +39,7 @@ public class ItemController {
     public ItemDtoWithBooking getItem(@PathVariable Long itemId,
                                       @RequestHeader(CUSTOMER_ID_HEADER) Long userId) {
         ItemDtoWithBooking result = itemService.getItem(userId, itemId);
-        System.out.println(result);
+        log.info("Предмет получен.");
         return result;
     }
 
@@ -49,7 +51,7 @@ public class ItemController {
             itemDto.setId(itemId);
         }
         ItemDto result = itemService.updateItem(userId, itemDto);
-        System.out.println(result);
+        log.info("Предмет обновлен.");
         return result;
     }
 
@@ -57,7 +59,7 @@ public class ItemController {
     public List<ItemDto> searchItem(@RequestHeader(CUSTOMER_ID_HEADER) Long userId,
                                     @RequestParam(name = "text") String text) {
         List<ItemDto> result = itemService.searchItem(text);
-        System.out.println(result);
+        log.info("Предмет найден.");
         return result;
     }
 
@@ -66,7 +68,7 @@ public class ItemController {
                                  @PathVariable Long itemId,
                                  @RequestBody @Valid CommentDtoInput commentDto) {
         CommentDto result = itemService.createComment(userId, itemId, commentDto);
-        System.out.println(result);
+        log.info("Комментарий добавлен.");
         return result;
     }
 }
