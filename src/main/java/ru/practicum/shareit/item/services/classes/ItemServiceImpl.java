@@ -16,12 +16,11 @@ import ru.practicum.shareit.item.mappers.CommentMapper;
 import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.models.Comment;
 import ru.practicum.shareit.item.models.Item;
-import ru.practicum.shareit.item.repository.interfaces.CommentRepository;
-import ru.practicum.shareit.item.repository.interfaces.ItemRepository;
+import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.services.interfaces.ItemService;
-import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.models.User;
-import ru.practicum.shareit.user.repository.interfaces.UserRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,7 +33,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final RequestRepository requestRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
@@ -49,9 +47,6 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Item item = itemMapper.itemDtoToItem(itemDto, userId);
-        if (itemDto.getRequestId() != null) {
-            requestRepository.findById(itemDto.getRequestId()).ifPresent(item::setRequest);
-        }
 
         item.setUser(user.get());
         item = itemRepository.save(item);
@@ -150,6 +145,7 @@ public class ItemServiceImpl implements ItemService {
             Long itemId = itemDtoWithBooking.getId();
             List<Booking> itemBookings = bookingsMap.getOrDefault(itemId, Collections.emptyList());
 
+
             Optional<Booking> lastBooking = itemBookings.stream()
                     .filter(booking -> booking.getStart().isBefore(currentTime) && booking.getEnd().isAfter(currentTime)
                             || booking.getEnd().isBefore(currentTime))
@@ -166,6 +162,14 @@ public class ItemServiceImpl implements ItemService {
                     b -> itemDtoWithBooking.setNextBooking(bookingMapper.toDtoShortVersion(b)));
             lastBooking.ifPresent(
                     b -> itemDtoWithBooking.setLastBooking(bookingMapper.toDtoShortVersion(b)));
+            nextBooking.ifPresent(
+                    booking -> itemDtoWithBooking.setNextBookingStart(booking.getStart()));
+            nextBooking.ifPresent(
+                    booking -> itemDtoWithBooking.setNextBookingEnd(booking.getEnd()));
+            lastBooking.ifPresent(
+                    booking -> itemDtoWithBooking.setLastBookingStart(booking.getStart()));
+            lastBooking.ifPresent(
+                    booking -> itemDtoWithBooking.setLastBookingEnd(booking.getEnd()));
         });
     }
 }

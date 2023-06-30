@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.request.models.Request;
 import ru.practicum.shareit.user.models.User;
 
 import javax.persistence.*;
@@ -28,7 +27,4 @@ public class Item {
     private String description;
     @Column(name = "is_available", nullable = false)
     private Boolean available;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "request_id", referencedColumnName = "id")
-    private Request request;
 }

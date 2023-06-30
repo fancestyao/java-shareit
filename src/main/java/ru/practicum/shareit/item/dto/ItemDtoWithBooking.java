@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDtoWithIdAndBooker;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,14 +15,14 @@ import java.util.List;
 @Builder
 public class ItemDtoWithBooking {
     private Long id;
-    @NotNull
-    @NotBlank
     private String name;
-    @NotNull
     private String description;
-    @NotNull
     private Boolean available;
     private BookingDtoWithIdAndBooker lastBooking;
     private BookingDtoWithIdAndBooker nextBooking;
+    private LocalDateTime lastBookingStart;
+    private LocalDateTime lastBookingEnd;
+    private LocalDateTime nextBookingStart;
+    private LocalDateTime nextBookingEnd;
     private List<CommentDto> comments;
 }
