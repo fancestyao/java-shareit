@@ -49,7 +49,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingMapper.fromDto(bookingDtoIn);
         booking.setBooker(user.get());
         booking.setItem(item);
-        //System.out.println(booking);
+        System.out.println(booking);
         return bookingMapper.toDto(bookingRepository.save(booking));
     }
 
@@ -85,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
         if (!bookingList.isPresent()) {
             throw new NotFoundException("Бронирования не найдены");
         }
-        //System.out.println(bookingList);
+        System.out.println(bookingList);
         return bookingMapper.toDtoBookings(bookingList.get());
     }
 
@@ -94,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoOut getBooking(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findByIdWithItemAndBooker(bookingId, userId)
                                            .orElseThrow(() -> new NotFoundException("Такой брони еще нет."));
-        //System.out.println(booking);
+        System.out.println(booking);
         return bookingMapper.toDto(booking);
     }
 
@@ -134,7 +134,7 @@ public class BookingServiceImpl implements BookingService {
         if (!bookingList.isPresent()) {
             throw new NotFoundException("Бронирования не найдены");
         }
-        //System.out.println(bookingList);
+        System.out.println(bookingList);
         return bookingMapper.toDtoBookings(bookingList.get());
     }
 
@@ -154,7 +154,7 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(Status.REJECTED);
         }
         booking = bookingRepository.save(booking);
-        //System.out.println(booking);
+        System.out.println(booking);
         return bookingMapper.toDto(booking);
     }
 }
