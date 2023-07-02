@@ -28,7 +28,7 @@ public class BookingController {
                 || bookingInputDto.getStart().equals(bookingInputDto.getEnd())) {
             throw new BadRequestException("Окончание бронирования не может быть раньше начала.");
         }
-        log.info("Букинг добавлен.");
+        log.info("Получен запрос от пользователя {} на бронирование предмета {}", bookerId, bookingInputDto);
         return bookingService.createBooking(bookingInputDto, bookerId);
     }
 
@@ -36,28 +36,28 @@ public class BookingController {
     public BookingDtoOut setApprove(@RequestHeader(CUSTOMER_ID_HEADER) Long ownerId,
                                     @PathVariable Long bookingId,
                                     @RequestParam Boolean approved) {
-        log.info("Букинг одобрен.");
+        log.info("Получен запрос от пользователя {} на подтверждение бронирования предмета {}", ownerId, bookingId);
         return bookingService.setApproval(ownerId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDtoOut getBooking(@RequestHeader(CUSTOMER_ID_HEADER) Long userID,
+    public BookingDtoOut getBooking(@RequestHeader(CUSTOMER_ID_HEADER) Long userId,
                               @PathVariable Long bookingId) {
-        log.info("Букинг получен.");
-        return bookingService.getBooking(userID, bookingId);
+        log.info("Получен запрос от пользователя {} на получение бронирования {}", userId, bookingId);
+        return bookingService.getBooking(userId, bookingId);
     }
 
-    @GetMapping()
-    public List<BookingDtoOut> getAllUserBookings(@RequestHeader(CUSTOMER_ID_HEADER) Long userID,
+    @GetMapping
+    public List<BookingDtoOut> getAllUserBookings(@RequestHeader(CUSTOMER_ID_HEADER) Long userId,
                                             @RequestParam(defaultValue = "ALL") String state) {
-        log.info("Все букинги пользователя получены.");
-        return bookingService.getAllBookings(userID, state);
+        log.info("Получен запрос от пользователя {} на получение его броней.", userId);
+        return bookingService.getAllBookings(userId, state);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoOut> getAllOwnersBookings(@RequestHeader(CUSTOMER_ID_HEADER) Long userID,
+    public List<BookingDtoOut> getAllOwnersBookings(@RequestHeader(CUSTOMER_ID_HEADER) Long userId,
                                               @RequestParam(defaultValue = "ALL") String state) {
-        log.info("Все пользователи букингов получены.");
-        return bookingService.getAllOwnerBookings(userID, state);
+        log.info("Получен запрос от пользователя {} на получение списка пользователей брони.", userId);
+        return bookingService.getAllOwnerBookings(userId, state);
     }
 }

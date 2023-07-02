@@ -23,7 +23,7 @@ public class ItemController {
     @GetMapping
     public List<ItemDtoWithBooking> getUserItems(@RequestHeader(CUSTOMER_ID_HEADER) Long userId) {
         List<ItemDtoWithBooking> result = itemService.getUserItems(userId);
-        log.info("Предметы пользователя получены.");
+        log.info("Получен запрос от пользователя {} на получение его вещей.", userId);
         return result;
     }
 
@@ -31,7 +31,7 @@ public class ItemController {
     public ItemDto createItem(@RequestHeader(CUSTOMER_ID_HEADER) Long userId,
                               @Valid @RequestBody ItemDto itemDto) {
         ItemDto result = itemService.createItem(userId, itemDto);
-        log.info("Предмет сохранен.");
+        log.info("Получен запрос от пользователя {} на добавление вещи.", userId);
         return result;
     }
 
@@ -39,7 +39,7 @@ public class ItemController {
     public ItemDtoWithBooking getItem(@PathVariable Long itemId,
                                       @RequestHeader(CUSTOMER_ID_HEADER) Long userId) {
         ItemDtoWithBooking result = itemService.getItem(userId, itemId);
-        log.info("Предмет получен.");
+        log.info("Получен запрос от пользователя {} на получение вещи {}.", userId, itemId);
         return result;
     }
 
@@ -51,7 +51,7 @@ public class ItemController {
             itemDto.setId(itemId);
         }
         ItemDto result = itemService.updateItem(userId, itemDto);
-        log.info("Предмет обновлен.");
+        log.info("Получен запрос от пользователя {} на обновление вещи {}.", userId, itemId);
         return result;
     }
 
@@ -59,7 +59,7 @@ public class ItemController {
     public List<ItemDto> searchItem(@RequestHeader(CUSTOMER_ID_HEADER) Long userId,
                                     @RequestParam(name = "text") String text) {
         List<ItemDto> result = itemService.searchItem(text);
-        log.info("Предмет найден.");
+        log.info("Получен запрос от пользователя {} на поиск предмета по описанию.", userId);
         return result;
     }
 
@@ -68,7 +68,7 @@ public class ItemController {
                                  @PathVariable Long itemId,
                                  @RequestBody @Valid CommentDtoInput commentDto) {
         CommentDto result = itemService.createComment(userId, itemId, commentDto);
-        log.info("Комментарий добавлен.");
+        log.info("Получен запрос от пользователя {} на добавление комментария к вещи {}.", userId, itemId);
         return result;
     }
 }
