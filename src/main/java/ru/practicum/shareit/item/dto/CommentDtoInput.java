@@ -10,13 +10,8 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
-    private Long id;
-    @NotBlank
-    private String name;
-    @NotBlank
-    private String description;
+public class CommentDtoInput {
     @NotNull
-    private Boolean available;
-    private Long requestId;
+    @NotBlank
+    private String text;
 }
