@@ -10,9 +10,9 @@ public interface BookingService {
 
     BookingDtoOut createBooking(BookingDtoIn bookingDtoIn, Long userId);
 
-    List<BookingDtoOut> getAllOwnerBookings(Long userID, String state);
+    List<BookingDtoOut> getAllOwnerBookings(Long userID, String state, Long from, Long size);
 
-    List<BookingDtoOut> getAllBookings(Long userId, String state);
+    List<BookingDtoOut> getAllBookings(Long userId, String state, Long from, Long size);
 
     BookingDtoOut setApproval(Long ownerId, Long bookingId, Boolean approve);
 }

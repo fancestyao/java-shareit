@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.models.Item;
+import ru.practicum.shareit.request.dto.ItemToRequestDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +27,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Optional<Item> getItemByIdAndUserId(Long itemId, Long userId);
 
+    @Query("select new ru.practicum.shareit.request.dto.ItemToRequestDto(i.id, i.name, i.description, i.available" +
+            ", i.request.id) " +
+            "from Item as i " +
+            "where i.request.id IN :requestsId")
+    List<ItemToRequestDto> findAllByRequests(@Param("requestsId") List<Long> requestsId);
 }
