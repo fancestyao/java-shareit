@@ -2,6 +2,7 @@ package ru.practicum.shareit.request.service.classes;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,7 +34,7 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final RequestMapper requestMapper;
+    private final RequestMapper requestMapper = Mappers.getMapper(RequestMapper.class);
 
     @Transactional
     @Override

@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.services.classes;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -16,9 +16,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserMapper mapper;
+    private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
     private final UserRepository repository;
 
     @Override

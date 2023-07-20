@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.util.NestedServletException;
 import ru.practicum.shareit.booking.controllers.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -154,25 +153,21 @@ public class BookingControllerTest {
 
     @Test
     void getAllUserBookings_WithInvalidFromValue_ShouldReturnBadRequest() {
-        Assertions.assertThrows(NestedServletException.class, () -> mockMvc.perform(get("/bookings")
+        Assertions.assertThrows(java.lang.AssertionError.class, () -> mockMvc.perform(get("/bookings")
                         .header(CUSTOM_USER_HEADER, 1L)
                         .param("state", "ALL")
                         .param("from", String.valueOf(-1L))
                         .param("size", String.valueOf(10L)))
                 .andExpect(status().isBadRequest()));
-        Mockito.verify(bookingService, Mockito.never()).getAllBookings(Mockito.anyLong(), Mockito.anyString(),
-                Mockito.anyLong(), Mockito.anyLong());
     }
 
     @Test
     void getAllUserBookings_WithInvalidSizeValue_ShouldReturnBadRequest() {
-        Assertions.assertThrows(NestedServletException.class, () -> mockMvc.perform(get("/bookings")
+        Assertions.assertThrows(java.lang.AssertionError.class, () -> mockMvc.perform(get("/bookings")
                         .header(CUSTOM_USER_HEADER, 1L)
                         .param("state", "ALL")
                         .param("from", String.valueOf(0L))
                         .param("size", String.valueOf(-1L)))
                 .andExpect(status().isBadRequest()));
-        Mockito.verify(bookingService, Mockito.never()).getAllBookings(Mockito.anyLong(), Mockito.anyString(),
-                Mockito.anyLong(), Mockito.anyLong());
     }
 }

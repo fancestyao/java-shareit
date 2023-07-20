@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -10,11 +11,14 @@ import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.request.models.Status;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 @RequestMapping("/bookings")
 public class BookingController {
     private static final String CUSTOM_USER_HEADER = "X-Sharer-User-Id";
@@ -50,30 +54,19 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDtoOut> getAllUserBookings(@RequestHeader(CUSTOM_USER_HEADER) Long userId,
-                                            @RequestParam(required = false, defaultValue = "ALL") String state,
-                                            @RequestParam(required = false, defaultValue = "0") Long from,
-                                            @RequestParam(required = false, defaultValue = "10") Long size) {
-        pageableValidation(from, size);
+                                            @RequestParam(defaultValue = "ALL") String state,
+                                                  @PositiveOrZero       @RequestParam(defaultValue = "0") Long from,
+                                                  @Positive @RequestParam(defaultValue = "10") Long size) {
         log.info("Запрос на получение всех букингов для пользователя с id {}.", userId);
         return bookingService.getAllBookings(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoOut> getAllOwnersBookings(@RequestHeader(CUSTOM_USER_HEADER) Long userId,
-                                              @RequestParam(required = false, defaultValue = "ALL") String state,
-                                              @RequestParam(required = false, defaultValue = "0") Long from,
-                                              @RequestParam(required = false, defaultValue = "10") Long size) {
-        pageableValidation(from, size);
+                                                    @RequestParam(defaultValue = "ALL") String state,
+                                                    @PositiveOrZero @RequestParam(defaultValue = "0") Long from,
+                                                    @Positive @RequestParam(defaultValue = "10") Long size) {
         log.info("Запрос на получение всех букингов для обладателя с id {}.", userId);
         return bookingService.getAllOwnerBookings(userId, state, from, size);
-    }
-
-    private void pageableValidation(Long from, Long size) {
-        if (from < 0) {
-            throw new BadRequestException("Индекс первого элемента не может быть меньше нуля");
-        }
-        if (size < 0 || size == 0) {
-            throw new BadRequestException("Количество элементов для отображения не может быть меньше или равно нулю");
-        }
     }
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.services.classes;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.mappers.BookingMapper;
@@ -34,14 +35,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-    private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-    private final CommentMapper commentMapper;
-    private final BookingMapper bookingMapper;
     private final RequestRepository requestRepository;
+    private final ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+    private final BookingMapper bookingMapper = Mappers.getMapper(BookingMapper.class);
+    private final CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
 
     @Override
     @Transactional
@@ -99,7 +100,6 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Предмет не найден");
         }
         List<CommentDto> comments = commentMapper.toDtoList(commentRepository.findAllByItemId(itemId));
-
         ItemDtoWithBooking itemDtoWithBooking = itemMapper.itemToItemDTOWithBookings(optionalItem.get(), comments);
         if (itemRepository.getItemByIdAndUserId(itemId, userId).isPresent()) {
             Optional<List<Booking>> ownerBookings = bookingRepository.findBookingsByItemIdOrderByEndDesc(itemId);
@@ -146,7 +146,7 @@ public class ItemServiceImpl implements ItemService {
         return commentToSend.get();
     }
 
-    private void setLastAndNextBookings(List<ItemDtoWithBooking> itemDtoWithBookings,
+    public void setLastAndNextBookings(List<ItemDtoWithBooking> itemDtoWithBookings,
                                         Map<Long, List<Booking>> bookingsMap) {
         LocalDateTime currentTime = LocalDateTime.now();
 
