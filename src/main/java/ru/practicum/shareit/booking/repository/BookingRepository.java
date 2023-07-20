@@ -24,7 +24,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findBookingByIdAndItemUserId(Long bookingId, Long ownerId);
 
     @Query(value = "select b from Booking b where b.booker.id = ?1 and b.start < ?2 and b.end > ?2")
-    Optional<List<Booking>> findAllByBookerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime localDateTime, PageRequest sort);
+    Optional<List<Booking>> findAllByBookerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime localDateTime,
+                                                                       PageRequest sort);
 
     Optional<List<Booking>> findAllByBookerId(Long bookerId, PageRequest sort);
 

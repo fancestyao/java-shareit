@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.services.classes;
 
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +31,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final BookingMapper bookingMapper;
+    private final BookingMapper bookingMapper = Mappers.getMapper(BookingMapper.class);
 
     @Override
     @Transactional
