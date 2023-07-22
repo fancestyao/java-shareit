@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.services.classes;
 
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -17,24 +18,24 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserMapper mapper;
+    private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
     private final UserRepository repository;
 
     @Override
     @Transactional
-    public UserDto createUser(UserDto userDTO) {
-        User user = repository.save(mapper.fromDTO(userDTO));
-        return mapper.toDTO(user);
+    public UserDto createUser(UserDto userDto) {
+        User user = repository.save(mapper.fromDto(userDto));
+        return mapper.toDto(user);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserDto getUser(long id) {
+    public UserDto getUser(Long id) {
         Optional<User> optionalUser = repository.findById(id);
         if (!optionalUser.isPresent())
             throw new NotFoundException("Пользователь не найден.");
         User user = optionalUser.get();
-        return mapper.toDTO(user);
+        return mapper.toDto(user);
     }
 
     @Override
@@ -43,14 +44,14 @@ public class UserServiceImpl implements UserService {
         List<User> allUsers = repository.findAll();
         return allUsers
                 .stream()
-                .map(mapper::toDTO)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public UserDto updateUser(long userId, UserDto userDTO) {
-        User user = mapper.fromDTO(userDTO);
+    public UserDto updateUser(Long userId, UserDto userDTO) {
+        User user = mapper.fromDto(userDTO);
         Optional<User> userDb = repository.findById(userId);
         if (!userDb.isPresent())
             throw new NotFoundException("Пользователь не найден.");
@@ -65,12 +66,12 @@ public class UserServiceImpl implements UserService {
         }
         User userToSave = userDb.get();
         repository.save(userToSave);
-        return mapper.toDTO(userToSave);
+        return mapper.toDto(userToSave);
     }
 
     @Override
     @Transactional
-    public void removeUser(long userId) {
+    public void removeUser(Long userId) {
         repository.deleteById(userId);
     }
 }

@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.services.classes;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.mappers.BookingMapper;
@@ -19,6 +21,8 @@ import ru.practicum.shareit.item.models.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.services.interfaces.ItemService;
+import ru.practicum.shareit.request.models.Request;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.models.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -29,28 +33,33 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService {
-    private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-    private final CommentMapper commentMapper;
-    private final BookingMapper bookingMapper;
+    private final RequestRepository requestRepository;
+    private final ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+    private final BookingMapper bookingMapper = Mappers.getMapper(BookingMapper.class);
+    private final CommentMapper commentMapper = Mappers.getMapper(CommentMapper.class);
 
     @Override
     @Transactional
     public ItemDto createItem(Long userId, ItemDto itemDto) {
-        Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent()) {
-            throw new NotFoundException("Пользователь не найден.");
-        }
-
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя нет."));
         Item item = itemMapper.itemDtoToItem(itemDto, userId);
-
-        item.setUser(user.get());
+        if (itemDto.getRequestId() != null) {
+            Request itemRequest = requestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Такого запроса нет."));
+            item.setRequest(itemRequest);
+        }
+        item.setUser(user);
         item = itemRepository.save(item);
         itemDto.setId(item.getId());
+        log.info("Предмет добавлен: {}", itemDto);
         return itemDto;
     }
 
@@ -62,6 +71,7 @@ public class ItemServiceImpl implements ItemService {
         Map<Long, List<Booking>> bookingsMap = bookingRepository.findBookingsByItemId(itemsId).stream()
                 .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
         setLastAndNextBookings(itemDtoWithBookings, bookingsMap);
+        log.info("Предметы для пользователя {} получены: {}", userId, itemDtoWithBookings);
         return itemDtoWithBookings;
     }
 
@@ -90,7 +100,6 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Предмет не найден");
         }
         List<CommentDto> comments = commentMapper.toDtoList(commentRepository.findAllByItemId(itemId));
-
         ItemDtoWithBooking itemDtoWithBooking = itemMapper.itemToItemDTOWithBookings(optionalItem.get(), comments);
         if (itemRepository.getItemByIdAndUserId(itemId, userId).isPresent()) {
             Optional<List<Booking>> ownerBookings = bookingRepository.findBookingsByItemIdOrderByEndDesc(itemId);
@@ -137,7 +146,7 @@ public class ItemServiceImpl implements ItemService {
         return commentToSend.get();
     }
 
-    private void setLastAndNextBookings(List<ItemDtoWithBooking> itemDtoWithBookings,
+    public void setLastAndNextBookings(List<ItemDtoWithBooking> itemDtoWithBookings,
                                         Map<Long, List<Booking>> bookingsMap) {
         LocalDateTime currentTime = LocalDateTime.now();
 
