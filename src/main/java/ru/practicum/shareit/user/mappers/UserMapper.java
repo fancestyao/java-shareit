@@ -6,7 +6,7 @@ import ru.practicum.shareit.user.models.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    UserDto toDTO(User user);
+    UserDto toDto(User user);
 
-    User fromDTO(UserDto userDTO);
+    User fromDto(UserDto userDTO);
 }

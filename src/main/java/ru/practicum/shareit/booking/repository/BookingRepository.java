@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,15 +24,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Optional<Booking> findBookingByIdAndItemUserId(Long bookingId, Long ownerId);
 
     @Query(value = "select b from Booking b where b.booker.id = ?1 and b.start < ?2 and b.end > ?2")
-    Optional<List<Booking>> findAllByBookerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime localDateTime, Sort sort);
+    Optional<List<Booking>> findAllByBookerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime localDateTime,
+                                                                       PageRequest sort);
 
-    Optional<List<Booking>> findAllByBookerId(Long bookerId, Sort sort);
+    Optional<List<Booking>> findAllByBookerId(Long bookerId, PageRequest sort);
 
-    Optional<List<Booking>> findAllByBookerIdAndStartAfter(Long bookerId, LocalDateTime localDateTime, Sort sort);
+    Optional<List<Booking>> findAllByBookerIdAndStartAfter(Long bookerId, LocalDateTime localDateTime, PageRequest sort);
 
-    Optional<List<Booking>> findAllByBookerIdAndEndBefore(Long bookerId, LocalDateTime localDateTime, Sort sort);
+    Optional<List<Booking>> findAllByBookerIdAndEndBefore(Long bookerId, LocalDateTime localDateTime, PageRequest sort);
 
-    Optional<List<Booking>> findAllByBookerIdAndStatus(Long bookerId, Status status, Sort sort);
+    Optional<List<Booking>> findAllByBookerIdAndStatus(Long bookerId, Status status, PageRequest sort);
 
     Optional<List<Booking>> findBookingsByItemIdOrderByEndDesc(Long itemId);
 
@@ -52,17 +54,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                                   @Param("itemId") Long itemId);
 
     @Query(value = "select b from Booking b where b.item.user.id = ?1")
-    Optional<List<Booking>> findAllByOwnerId(Long userId, Sort sort);
+    Optional<List<Booking>> findAllByOwnerId(Long userId, Pageable pageable);
 
     @Query(value = "select b from Booking b where b.item.user.id = ?1 and b.start < ?2 and b.end > ?2")
-    Optional<List<Booking>> findAllByOwnerIdAndStartBeforeAndEndAfter(Long userId, LocalDateTime localDateTime, Sort sort);
+    Optional<List<Booking>> findAllByOwnerIdAndStartBeforeAndEndAfter(Long userId, LocalDateTime localDateTime,
+                                                                      Pageable pageable);
 
     @Query(value = "select b from Booking b where b.item.user.id = ?1 and b.end < ?2")
-    Optional<List<Booking>> findAllByOwnerIdAndEndBefore(Long userId, LocalDateTime localDateTime, Sort sort);
+    Optional<List<Booking>> findAllByOwnerIdAndEndBefore(Long userId, LocalDateTime localDateTime, Pageable pageable);
 
     @Query(value = "select b from Booking b where b.item.user.id = ?1 and b.status = ?2")
-    Optional<List<Booking>> findAllByOwnerIdAndStatus(Long userId, Status status, Sort sort);
+    Optional<List<Booking>> findAllByOwnerIdAndStatus(Long userId, Status status, Pageable pageable);
 
     @Query(value = "select b from Booking b where b.item.user.id = ?1 and b.start > ?2")
-    Optional<List<Booking>> findAllByOwnerIdAndStartAfter(Long userId, LocalDateTime localDateTime, Sort sort);
+    Optional<List<Booking>> findAllByOwnerIdAndStartAfter(Long userId, LocalDateTime localDateTime, Pageable pageable);
 }
