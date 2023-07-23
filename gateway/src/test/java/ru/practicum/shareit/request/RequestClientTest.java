@@ -89,4 +89,5 @@ public class RequestClientTest {
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
 }
