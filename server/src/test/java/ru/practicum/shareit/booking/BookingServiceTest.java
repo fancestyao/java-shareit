@@ -50,7 +50,7 @@ public class BookingServiceTest {
         itemOne = new Item(null, userOne, "testItem", "testDescription", true, null);
         itemTwo = new Item(null, userOne, "testItem2", "testDescription2", true, null);
     }
-    
+
     @Test
     void createBookingByUserTest() {
         BookingDtoIn bookingInputDto = BookingDtoIn.builder()

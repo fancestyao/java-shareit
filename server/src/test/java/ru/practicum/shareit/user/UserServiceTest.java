@@ -14,7 +14,8 @@ import ru.practicum.shareit.user.services.classes.UserServiceImpl;
 
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
@@ -22,9 +23,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 @Sql(scripts = {"file:src/main/resources/schema.sql"})
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceTest {
-    private final UserServiceImpl userService;
     private static UserDto userOne;
     private static UserDto userTwo;
+    private final UserServiceImpl userService;
 
     @BeforeEach
     void beforeEach() {

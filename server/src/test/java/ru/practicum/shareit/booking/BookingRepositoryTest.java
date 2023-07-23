@@ -20,10 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@DataJpaTest(properties = {
-        "spring.config.name=application-test",
-        "spring.config.location=classpath:application-test.properties"
-})
+@DataJpaTest(properties = {"spring.config.name=application-test", "spring.config.location=classpath:application-test.properties"})
 @ExtendWith(SpringExtension.class)
 class BookingRepositoryTest {
     @Autowired
@@ -45,12 +42,8 @@ class BookingRepositoryTest {
         userTwo = new User();
         userTwo.setName("TestBooker");
         userTwo.setEmail("testBooker@email.ru");
-
-        itemOne = new Item(null, userOne, "testItem", "testDescription", true,
-                null);
-        itemTwo = new Item(null, userOne, "testItem3", "testDescription3", true,
-                null);
-
+        itemOne = new Item(null, userOne, "testItem", "testDescription", true, null);
+        itemTwo = new Item(null, userOne, "testItem3", "testDescription3", true, null);
         booking = new Booking();
         booking.setBooker(userTwo);
         booking.setStatus(Status.WAITING);
@@ -65,7 +58,6 @@ class BookingRepositoryTest {
         entityManager.persist(userTwo);
         entityManager.persist(itemOne);
         entityManager.persist(booking);
-
         Optional<Booking> optionalBooking = bookingRepository.findByIdWithItemAndBooker(booking.getId(), userTwo.getId());
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get());
@@ -79,9 +71,7 @@ class BookingRepositoryTest {
         entityManager.persist(booking);
         long size = 4L;
         PageRequest sortedByEndDesc = PageRequest.of(0, (int) size, Sort.by("end").descending());
-
-        Optional<List<Booking>> optionalBooking = bookingRepository
-                .findAllByBookerIdAndStartBeforeAndEndAfter(userTwo.getId(), LocalDateTime.now(), sortedByEndDesc);
+        Optional<List<Booking>> optionalBooking = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(userTwo.getId(), LocalDateTime.now(), sortedByEndDesc);
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }
@@ -94,9 +84,7 @@ class BookingRepositoryTest {
         entityManager.persist(booking);
         long size = 4L;
         PageRequest sortedByEndDesc = PageRequest.of(0, (int) size, Sort.by("end").descending());
-
-        Optional<List<Booking>> optionalBooking = bookingRepository
-                .findAllByOwnerIdAndStartBeforeAndEndAfter(userOne.getId(), LocalDateTime.now(), sortedByEndDesc);
+        Optional<List<Booking>> optionalBooking = bookingRepository.findAllByOwnerIdAndStartBeforeAndEndAfter(userOne.getId(), LocalDateTime.now(), sortedByEndDesc);
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }
@@ -111,9 +99,7 @@ class BookingRepositoryTest {
         entityManager.persist(booking);
         long size = 4L;
         PageRequest sortedByEndDesc = PageRequest.of(0, (int) size, Sort.by("end").descending());
-
-        Optional<List<Booking>> optionalBooking = bookingRepository
-                .findAllByBookerIdAndEndBefore(userTwo.getId(), LocalDateTime.now(), sortedByEndDesc);
+        Optional<List<Booking>> optionalBooking = bookingRepository.findAllByBookerIdAndEndBefore(userTwo.getId(), LocalDateTime.now(), sortedByEndDesc);
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }
@@ -128,9 +114,7 @@ class BookingRepositoryTest {
         entityManager.persist(booking);
         long size = 4L;
         PageRequest sortedByEndDesc = PageRequest.of(0, (int) size, Sort.by("end").descending());
-
-        Optional<List<Booking>> optionalBooking = bookingRepository
-                .findAllByOwnerIdAndEndBefore(userOne.getId(), LocalDateTime.now() ,sortedByEndDesc);
+        Optional<List<Booking>> optionalBooking = bookingRepository.findAllByOwnerIdAndEndBefore(userOne.getId(), LocalDateTime.now(), sortedByEndDesc);
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }
@@ -145,9 +129,7 @@ class BookingRepositoryTest {
         entityManager.persist(booking);
         long size = 4L;
         PageRequest sortedByEndDesc = PageRequest.of(0, (int) size, Sort.by("end").descending());
-
-        Optional<List<Booking>> optionalBooking = bookingRepository
-                .findAllByBookerIdAndStartAfter(userTwo.getId(), LocalDateTime.now(), sortedByEndDesc);
+        Optional<List<Booking>> optionalBooking = bookingRepository.findAllByBookerIdAndStartAfter(userTwo.getId(), LocalDateTime.now(), sortedByEndDesc);
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }
@@ -162,9 +144,7 @@ class BookingRepositoryTest {
         entityManager.persist(booking);
         long size = 4L;
         PageRequest sortedByEndDesc = PageRequest.of(0, (int) size, Sort.by("end").descending());
-
-        Optional<List<Booking>> optionalBooking = bookingRepository
-                .findAllByOwnerIdAndStartAfter(userOne.getId(), LocalDateTime.now(), sortedByEndDesc);
+        Optional<List<Booking>> optionalBooking = bookingRepository.findAllByOwnerIdAndStartAfter(userOne.getId(), LocalDateTime.now(), sortedByEndDesc);
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }
@@ -175,9 +155,7 @@ class BookingRepositoryTest {
         entityManager.persist(userTwo);
         entityManager.persist(itemTwo);
         entityManager.persist(booking);
-
-        Optional<List<Booking>> optionalBooking = Optional.ofNullable(bookingRepository
-                .findBookingsByItemId(List.of(itemTwo.getId())));
+        Optional<List<Booking>> optionalBooking = Optional.ofNullable(bookingRepository.findBookingsByItemId(List.of(itemTwo.getId())));
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }
@@ -187,14 +165,11 @@ class BookingRepositoryTest {
         booking.setStart(LocalDateTime.now().minusDays(5));
         booking.setEnd(LocalDateTime.now().minusDays(4));
         booking.setStatus(Status.APPROVED);
-
         entityManager.persist(userOne);
         entityManager.persist(userTwo);
         entityManager.persist(itemTwo);
         entityManager.persist(booking);
-
-        Optional<List<Booking>> optionalBooking = Optional.ofNullable(bookingRepository
-                .findBookingByBookerIdAndItemIdAndStatusApproved(userTwo.getId(), itemTwo.getId()));
+        Optional<List<Booking>> optionalBooking = Optional.ofNullable(bookingRepository.findBookingByBookerIdAndItemIdAndStatusApproved(userTwo.getId(), itemTwo.getId()));
         Assertions.assertTrue(optionalBooking.isPresent());
         Assertions.assertEquals(booking, optionalBooking.get().get(0));
     }

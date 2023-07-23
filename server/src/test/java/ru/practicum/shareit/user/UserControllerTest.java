@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @InjectMocks
     private UserController userController;
     @Mock
@@ -33,7 +34,6 @@ public class UserControllerTest {
     private UserDto userDto;
     private UserDto userDtoTwo;
     private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void beforeEach() {
@@ -58,8 +58,8 @@ public class UserControllerTest {
     void givenUserDto_whenGetUser_thenExpectSameEmailAndNameAndOkStatus() throws Exception {
         Mockito.when(userService.getUser(Mockito.anyLong())).thenReturn(userDto);
         mockMvc.perform(get("/users/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email", is(userDto.getEmail()), String.class))
                 .andExpect(jsonPath("$.name", is(userDto.getName()), String.class));

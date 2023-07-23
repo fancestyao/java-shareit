@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.util.NestedServletException;
 import ru.practicum.shareit.request.controllers.RequestController;
 import ru.practicum.shareit.request.dto.ItemRequestInputDto;
 import ru.practicum.shareit.request.dto.RequestDtoWithItems;
@@ -32,16 +31,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 public class RequestControllerTest {
+    private static final String CUSTOM_USER_ID_HEADER = "X-Sharer-User-Id";
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @InjectMocks
     private RequestController requestController;
     @Mock
     private RequestServiceImpl requestService;
     private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private Request request;
     private ItemRequestInputDto itemRequestInputDto;
     private RequestDtoWithItems requestDtoWithItems;
-    private final String CUSTOM_USER_HEADER = "X-Sharer-User-Id";
 
     @BeforeEach
     void beforeEach() {
@@ -65,7 +64,7 @@ public class RequestControllerTest {
     void givenRequest_whenCreateRequest_thenExpectSameIdAndDescription() throws Exception {
         Mockito.when(requestService.createRequest(Mockito.any())).thenReturn(request);
         mockMvc.perform(post("/requests")
-                        .header(CUSTOM_USER_HEADER, 1)
+                        .header(CUSTOM_USER_ID_HEADER, 1)
                         .content(objectMapper.writeValueAsString(itemRequestInputDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -78,7 +77,7 @@ public class RequestControllerTest {
     void givenRequest_whenGetRequests_thenExpectSameIdAndDescription() throws Exception {
         Mockito.when(requestService.getRequests(Mockito.any())).thenReturn(List.of(requestDtoWithItems));
         mockMvc.perform(get("/requests")
-                        .header(CUSTOM_USER_HEADER, 1)
+                        .header(CUSTOM_USER_ID_HEADER, 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id",
@@ -92,7 +91,7 @@ public class RequestControllerTest {
         Mockito.when(requestService.getRequestsInPages(Mockito.any(), Mockito.anyLong(), Mockito.anyLong()))
                 .thenReturn(List.of(requestDtoWithItems));
         mockMvc.perform(get("/requests/all")
-                        .header(CUSTOM_USER_HEADER, 2)
+                        .header(CUSTOM_USER_ID_HEADER, 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id",
@@ -105,7 +104,7 @@ public class RequestControllerTest {
     void givenRequest_whenGetRequestsInPagesAndPageIsLessThanZero_thenExpectSameBadRequestExceptionMessage() {
         Assertions.assertThrows(AssertionError.class,
                 () -> mockMvc.perform(get("/requests/all?from=-5&size=5")
-                                .header(CUSTOM_USER_HEADER, 2)
+                                .header(CUSTOM_USER_ID_HEADER, 2)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())
@@ -117,13 +116,13 @@ public class RequestControllerTest {
     void givenRequest_whenGetRequestsInPagesAndPageIsLessThanZeroOrEqualsZero_thenExpectSameBadRequestExceptionMessage() {
         Assertions.assertThrows(AssertionError.class,
                 () -> mockMvc.perform(get("/requests/all?from=0&size=-5")
-                                .header(CUSTOM_USER_HEADER, 2)
+                                .header(CUSTOM_USER_ID_HEADER, 2)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())
                         .andExpect(MockMvcResultMatchers.jsonPath("$.detailMessage",
                                 is("Количество элементов для отображения" +
-                                " не может быть меньше или равно нулю"))));
+                                        " не может быть меньше или равно нулю"))));
     }
 
     @Test
@@ -131,7 +130,7 @@ public class RequestControllerTest {
         Mockito.when(requestService.getRequest(Mockito.any(), Mockito.anyLong()))
                 .thenReturn(requestDtoWithItems);
         mockMvc.perform(get("/requests/1")
-                        .header(CUSTOM_USER_HEADER, 2)
+                        .header(CUSTOM_USER_ID_HEADER, 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id",

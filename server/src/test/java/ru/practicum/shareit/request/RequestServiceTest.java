@@ -71,7 +71,7 @@ public class RequestServiceTest {
         userRepository.save(userTwo);
         requestRepository.save(itemRequest);
         Assertions.assertEquals("itemRequestDescription",
-                itemRequestService.getRequestsInPages(2L,0L,4L).get(0).getDescription());
+                itemRequestService.getRequestsInPages(2L, 0L, 4L).get(0).getDescription());
     }
 
     @Test

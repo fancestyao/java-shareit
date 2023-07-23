@@ -20,6 +20,7 @@ import ru.practicum.shareit.item.dto.CommentDtoInput;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.services.interfaces.ItemService;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @ExtendWith(MockitoExtension.class)
 public class ItemControllerTest {
+    private static final String CUSTOM_USER_ID_HEADER = "X-Sharer-User-Id";
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @InjectMocks
     private ItemController itemController;
     @Mock
@@ -37,8 +40,6 @@ public class ItemControllerTest {
     private ItemDto itemDto;
     private ItemDtoWithBooking itemDtoWithBooking;
     private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final String CUSTOM_USER_HEADER = "X-Sharer-User-Id";
 
     @BeforeEach
     void beforeEach() {
@@ -64,7 +65,7 @@ public class ItemControllerTest {
         mockMvc.perform(post("/items", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto))
-                        .header(CUSTOM_USER_HEADER, 2)
+                        .header(CUSTOM_USER_ID_HEADER, 2)
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("itemDtoName"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description")
@@ -80,7 +81,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto))
-                        .header(CUSTOM_USER_HEADER, 2))
+                        .header(CUSTOM_USER_ID_HEADER, 2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("itemDtoWithBookingName"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description")
                         .value("itemDtoWithBookingDescription"))
@@ -95,7 +96,7 @@ public class ItemControllerTest {
         mockMvc.perform(patch("/items/{itemId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto))
-                        .header(CUSTOM_USER_HEADER, 1L))
+                        .header(CUSTOM_USER_ID_HEADER, 1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("itemDtoNewName"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description")
                         .value("itemDtoDescription"))
@@ -109,7 +110,7 @@ public class ItemControllerTest {
         List<ItemDto> itemList = List.of(itemDto);
         Mockito.when(itemService.searchItem(searchText)).thenReturn(itemList);
         mockMvc.perform(MockMvcRequestBuilders.get("/items/search")
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .param("text", searchText))
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("itemDtoName")))
@@ -127,7 +128,7 @@ public class ItemControllerTest {
         inputCommentDto.setText(commentText);
         Mockito.when(itemService.createComment(1L, 1L, inputCommentDto)).thenReturn(commentDto);
         mockMvc.perform(MockMvcRequestBuilders.post("/items/{itemId}/comment", 1L)
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentText)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(1)))
@@ -143,9 +144,9 @@ public class ItemControllerTest {
     void getUserItemsTest() throws Exception {
         Mockito.when(itemService.getUserItems(Mockito.anyLong()))
                 .thenReturn(Collections
-                .singletonList(itemDtoWithBooking));
+                        .singletonList(itemDtoWithBooking));
         mockMvc.perform(MockMvcRequestBuilders.get("/items")
-                        .header(CUSTOM_USER_HEADER, 2))
+                        .header(CUSTOM_USER_ID_HEADER, 2))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name")

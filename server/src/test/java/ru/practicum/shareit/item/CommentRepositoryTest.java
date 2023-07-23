@@ -22,13 +22,13 @@ import java.util.List;
 })
 @ExtendWith(SpringExtension.class)
 public class CommentRepositoryTest {
+    User user;
+    Item item;
+    Comment comment;
     @Autowired
     private TestEntityManager entityManager;
     @Autowired
     private CommentRepository commentRepository;
-    User user;
-    Item item;
-    Comment comment;
 
     @BeforeEach
     void beforeEach() {
