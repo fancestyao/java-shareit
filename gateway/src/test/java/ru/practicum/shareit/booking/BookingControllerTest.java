@@ -39,6 +39,7 @@ public class BookingControllerTest {
     private MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private User user;
+    private Item item;
     private BookingDtoIn bookingInputDto;
     private BookingDtoOut expectedBooking;
     private static final String CUSTOM_USER_ID_HEADER = "X-Sharer-User-Id";
@@ -47,7 +48,7 @@ public class BookingControllerTest {
     void beforeEach() {
         objectMapper.registerModule(new JavaTimeModule());
         mockMvc = MockMvcBuilders.standaloneSetup(bookingController).build();
-        Item item = new Item(1L, user, "itemName", "itemDescription", true, null);
+        item = new Item(1L, user, "itemName", "itemDescription", true, null);
         user = new User();
         user.setName("userName");
         user.setEmail("userEmail@mail.ru");
@@ -77,19 +78,21 @@ public class BookingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.status").value(Status.WAITING.name()));
-
         Mockito.verify(bookingClient).createBooking(Mockito.any(BookingDtoIn.class), Mockito.anyLong());
     }
 
     @Test
-    void addWithInvalidInputShouldReturnBadRequest() {
-        expectedBooking.setStart(LocalDateTime.now().plusDays(34));
-        Assertions.assertThrows(AssertionError.class,
-                () -> mockMvc.perform(post("/bookings")
-                                .header(CUSTOM_USER_ID_HEADER, 1L)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(bookingInputDto)))
-                        .andExpect(status().isBadRequest()));
+    void addWithInvalidInputShouldReturnBadRequest() throws Exception {
+        BookingDtoIn bookingInputDto = BookingDtoIn.builder()
+                .start(LocalDateTime.now().plusHours(10))
+                .end(LocalDateTime.now().plusHours(5))
+                .itemId(item.getId())
+                .build();
+        mockMvc.perform(post("/bookings")
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(bookingInputDto)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
