@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 import ru.practicum.shareit.request.controllers.RequestController;
 import ru.practicum.shareit.request.dto.ItemRequestInputDto;
 import ru.practicum.shareit.request.dto.RequestDtoWithItems;
@@ -102,7 +103,7 @@ public class RequestControllerTest {
 
     @Test
     void givenRequest_whenGetRequestsInPagesAndPageIsLessThanZero_thenExpectSameBadRequestExceptionMessage() {
-        Assertions.assertThrows(AssertionError.class,
+        Assertions.assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/requests/all?from=-5&size=5")
                                 .header(CUSTOM_USER_ID_HEADER, 2)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +115,7 @@ public class RequestControllerTest {
 
     @Test
     void givenRequest_whenGetRequestsInPagesAndPageIsLessThanZeroOrEqualsZero_thenExpectSameBadRequestExceptionMessage() {
-        Assertions.assertThrows(AssertionError.class,
+        Assertions.assertThrows(NestedServletException.class,
                 () -> mockMvc.perform(get("/requests/all?from=0&size=-5")
                                 .header(CUSTOM_USER_ID_HEADER, 2)
                                 .contentType(MediaType.APPLICATION_JSON)
