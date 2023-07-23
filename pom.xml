@@ -83,7 +83,6 @@
             <version>${querydsl.version}</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
