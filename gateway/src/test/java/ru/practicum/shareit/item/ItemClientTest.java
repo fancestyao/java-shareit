@@ -93,26 +93,26 @@ class ItemClientTest {
 
     @Test
     void addItem() throws JsonProcessingException {
-        ItemDto ItemDto = new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
+        ItemDto itemDto = new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
                 item.getRequest().getId());
-        String request = objectMapper.writeValueAsString(ItemDto);
+        String request = objectMapper.writeValueAsString(itemDto);
         mockRestServiceServer.expect(requestTo("http://localhost:9090/items"))
                 .andExpect(content().json(request))
                 .andRespond(withSuccess());
-        ResponseEntity<Object> addItemResponse = this.client.createItem(1L, ItemDto);
+        ResponseEntity<Object> addItemResponse = this.client.createItem(1L, itemDto);
         Assertions.assertNotNull(addItemResponse);
         Assertions.assertEquals(HttpStatus.OK, addItemResponse.getStatusCode());
     }
 
     @Test
     void update() throws JsonProcessingException {
-        ItemDto ItemDto = new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
+        ItemDto itemDto = new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
                 item.getRequest().getId());
-        String request = objectMapper.writeValueAsString(ItemDto);
+        String request = objectMapper.writeValueAsString(itemDto);
         mockRestServiceServer.expect(requestTo("http://localhost:9090/items/1"))
                 .andExpect(content().json(request))
                 .andRespond(withSuccess());
-        ResponseEntity<Object> updateResponse = this.client.updateItem(1L, ItemDto, 1L);
+        ResponseEntity<Object> updateResponse = this.client.updateItem(1L, itemDto, 1L);
         Assertions.assertNotNull(updateResponse);
         Assertions.assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
     }

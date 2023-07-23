@@ -40,7 +40,6 @@ class ItemControllerTest {
     private MockMvc mockMvc;
     private ItemDtoWithBooking itemDtoWithBooking;
     private ItemDto itemDto;
-
     private static final String CUSTOM_USER_ID_HEADER = "X-Sharer-User-Id";
 
     @BeforeEach

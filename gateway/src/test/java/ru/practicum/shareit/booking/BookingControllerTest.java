@@ -41,7 +41,7 @@ public class BookingControllerTest {
     private User user;
     private BookingDtoIn bookingInputDto;
     private BookingDtoOut expectedBooking;
-    private final String CUSTOM_USER_HEADER = "X-Sharer-User-Id";
+    private static final String CUSTOM_USER_ID_HEADER = "X-Sharer-User-Id";
 
     @BeforeEach
     void beforeEach() {
@@ -71,7 +71,7 @@ public class BookingControllerTest {
         Mockito.when(bookingClient.createBooking(Mockito.any(BookingDtoIn.class), Mockito.anyLong()))
                 .thenReturn(ResponseEntity.ok(expectedBooking));
         mockMvc.perform(post("/bookings")
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookingInputDto)))
                 .andExpect(status().isOk())
@@ -86,7 +86,7 @@ public class BookingControllerTest {
         expectedBooking.setStart(LocalDateTime.now().plusDays(34));
         Assertions.assertThrows(AssertionError.class,
                 () -> mockMvc.perform(post("/bookings")
-                                .header(CUSTOM_USER_HEADER, 1L)
+                                .header(CUSTOM_USER_ID_HEADER, 1L)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(bookingInputDto)))
                         .andExpect(status().isBadRequest()));
@@ -98,7 +98,7 @@ public class BookingControllerTest {
         Mockito.when(bookingClient.setApproval(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
                 .thenReturn(ResponseEntity.ok(expectedBooking));
         mockMvc.perform(patch("/bookings/{bookingId}", 1L)
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .param("approved", String.valueOf(Boolean.TRUE)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists());
@@ -111,7 +111,7 @@ public class BookingControllerTest {
         Mockito.when(bookingClient.getBooking(Mockito.anyLong(), Mockito.anyLong()))
                 .thenReturn(ResponseEntity.ok(expectedBooking));
         mockMvc.perform(get("/bookings/{bookingId}", 1L)
-                        .header(CUSTOM_USER_HEADER, 1L))
+                        .header(CUSTOM_USER_ID_HEADER, 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists());
         Mockito.verify(bookingClient).getBooking(Mockito.anyLong(), Mockito.anyLong());
@@ -124,7 +124,7 @@ public class BookingControllerTest {
                         Mockito.anyLong()))
                 .thenReturn(ResponseEntity.ok(expectedBookings));
         mockMvc.perform(get("/bookings")
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .param("state", "ALL")
                         .param("from", String.valueOf(0L))
                         .param("size", String.valueOf(10L)))
@@ -142,7 +142,7 @@ public class BookingControllerTest {
                         Mockito.anyLong()))
                 .thenReturn(ResponseEntity.ok(expectedBookings));
         mockMvc.perform(get("/bookings/owner")
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .param("state", "ALL")
                         .param("from", String.valueOf(0L))
                         .param("size", String.valueOf(10L)))
@@ -156,7 +156,7 @@ public class BookingControllerTest {
     @Test
     void getAllUserBookings_WithInvalidFromValue_ShouldReturnBadRequest() {
         Assertions.assertThrows(java.lang.AssertionError.class, () -> mockMvc.perform(get("/bookings")
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .param("state", "ALL")
                         .param("from", String.valueOf(-1L))
                         .param("size", String.valueOf(10L)))
@@ -166,7 +166,7 @@ public class BookingControllerTest {
     @Test
     void getAllUserBookings_WithInvalidSizeValue_ShouldReturnBadRequest() {
         Assertions.assertThrows(java.lang.AssertionError.class, () -> mockMvc.perform(get("/bookings")
-                        .header(CUSTOM_USER_HEADER, 1L)
+                        .header(CUSTOM_USER_ID_HEADER, 1L)
                         .param("state", "ALL")
                         .param("from", String.valueOf(0L))
                         .param("size", String.valueOf(-1L)))

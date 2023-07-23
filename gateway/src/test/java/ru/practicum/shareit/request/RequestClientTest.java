@@ -39,15 +39,15 @@ public class RequestClientTest {
         user.setName("testUser");
         user.setEmail("test@email.ru");
         user.setId(1L);
-        Request Request = new Request();
-        Request.setRequester(user);
-        Request.setDescription("requestDescription");
-        Request.setId(1L);
-        Request.setCreated(LocalDateTime.now());
+        Request itemRequest = new Request();
+        itemRequest.setRequester(user);
+        itemRequest.setDescription("requestDescription");
+        itemRequest.setId(1L);
+        itemRequest.setCreated(LocalDateTime.now());
         itemRequestInputDto = new ItemRequestInputDto("itemRequestInputDtoDescription",
                 LocalDateTime.now());
         request = objectMapper.writeValueAsString(itemRequestInputDto);
-        result = objectMapper.writeValueAsString(Request);
+        result = objectMapper.writeValueAsString(itemRequest);
     }
 
     @Test

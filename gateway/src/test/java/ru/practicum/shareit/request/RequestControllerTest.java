@@ -41,7 +41,7 @@ public class RequestControllerTest {
     private Request request;
     private ItemRequestInputDto itemRequestInputDto;
     private RequestDtoWithItems requestDtoWithItems;
-    private final String CUSTOM_USER_HEADER = "X-Sharer-User-Id";
+    private static final String CUSTOM_USER_HEADER = "X-Sharer-User-Id";
 
     @BeforeEach
     void beforeEach() {
