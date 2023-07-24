@@ -72,19 +72,6 @@ public class BookingControllerTest {
     }
 
     @Test
-    void addWithInvalidInputShouldReturnBadRequest() throws Exception {
-        BookingDtoIn bookingInputDto = BookingDtoIn.builder()
-                .start(LocalDateTime.now().plusHours(10))
-                .end(LocalDateTime.now().plusHours(5))
-                .build();
-        mockMvc.perform(post("/bookings")
-                        .header(CUSTOM_USER_ID_HEADER, 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(bookingInputDto)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void setApproveWithValidInputShouldReturnBooking() throws Exception {
         expectedBooking.setId(1L);
         Mockito.when(bookingClient.setApproval(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))

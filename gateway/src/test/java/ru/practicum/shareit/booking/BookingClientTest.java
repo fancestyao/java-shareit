@@ -81,6 +81,23 @@ public class BookingClientTest {
     }
 
     @Test
+    void getBookingQ() throws JsonProcessingException {
+        BookingDtoIn bookingInputDto = BookingDtoIn.builder()
+                .start(LocalDateTime.now().plusHours(1))
+                .end(LocalDateTime.now().plusHours(5))
+                .itemId(1L)
+                .status(WAITING)
+                .build();
+        String response = objectMapper.writeValueAsString(bookingInputDto);
+        mockRestServiceServer.expect(requestTo("http://localhost:9090/bookings/2"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+        ResponseEntity<Object> responseEntity = this.bookingClient.getBooking(1L, 2L);
+        Assertions.assertNotNull(responseEntity);
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
     void getAllBookings() throws JsonProcessingException {
         BookingDtoIn bookingInputDto1 = BookingDtoIn.builder()
                 .start(LocalDateTime.now().plusHours(1))
