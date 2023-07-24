@@ -18,9 +18,7 @@ import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.controllers.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
-import ru.practicum.shareit.item.models.Item;
-import ru.practicum.shareit.request.models.Status;
-import ru.practicum.shareit.user.models.User;
+import ru.practicum.shareit.request.enums.Status;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -38,8 +36,6 @@ public class BookingControllerTest {
     private BookingClient bookingClient;
     private MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private User user;
-    private Item item;
     private BookingDtoIn bookingInputDto;
     private BookingDtoOut expectedBooking;
     private static final String CUSTOM_USER_ID_HEADER = "X-Sharer-User-Id";
@@ -48,20 +44,14 @@ public class BookingControllerTest {
     void beforeEach() {
         objectMapper.registerModule(new JavaTimeModule());
         mockMvc = MockMvcBuilders.standaloneSetup(bookingController).build();
-        item = new Item(1L, user, "itemName", "itemDescription", true, null);
-        user = new User();
-        user.setName("userName");
-        user.setEmail("userEmail@mail.ru");
-        user.setId(1L);
         bookingInputDto = BookingDtoIn.builder()
                 .start(LocalDateTime.now().plusHours(2))
                 .end(LocalDateTime.now().plusHours(10))
-                .itemId(item.getId())
+                .itemId(1L)
                 .build();
         expectedBooking = BookingDtoOut.builder()
                 .start(LocalDateTime.now().plusHours(2))
                 .end(LocalDateTime.now().plusHours(10))
-                .item(item)
                 .build();
     }
 
@@ -86,7 +76,6 @@ public class BookingControllerTest {
         BookingDtoIn bookingInputDto = BookingDtoIn.builder()
                 .start(LocalDateTime.now().plusHours(10))
                 .end(LocalDateTime.now().plusHours(5))
-                .itemId(item.getId())
                 .build();
         mockMvc.perform(post("/bookings")
                         .header(CUSTOM_USER_ID_HEADER, 1L)

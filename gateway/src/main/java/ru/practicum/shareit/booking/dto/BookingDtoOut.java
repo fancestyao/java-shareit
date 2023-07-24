@@ -2,9 +2,10 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.item.models.Item;
-import ru.practicum.shareit.request.models.Status;
-import ru.practicum.shareit.user.models.User;
+
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.request.enums.Status;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 
@@ -12,9 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingDtoOut {
     private Long id;
-    private Item item;
-    private User booker;
+    private ItemDto item;
+    private UserDto booker;
     private Status status;
     private LocalDateTime start;
     private LocalDateTime end;
 }
+

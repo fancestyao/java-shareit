@@ -8,11 +8,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
-import ru.practicum.shareit.request.models.Status;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+
+import static ru.practicum.shareit.request.enums.Status.WAITING;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<Object> createBooking(@RequestHeader(CUSTOM_USER_HEADER) Long bookerId,
                                                 @RequestBody @Valid BookingDtoIn bookingDtoIn) {
-        bookingDtoIn.setStatus(Status.WAITING);
+        bookingDtoIn.setStatus(WAITING);
         if (bookingDtoIn.getEnd().isBefore(bookingDtoIn.getStart())
                 || bookingDtoIn.getStart().equals(bookingDtoIn.getEnd())) {
             log.warn("Окончание бронирования не может быть раньше начала.");

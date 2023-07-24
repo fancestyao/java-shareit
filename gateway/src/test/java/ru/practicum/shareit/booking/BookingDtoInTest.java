@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
-import ru.practicum.shareit.request.models.Status;
+import ru.practicum.shareit.request.enums.Status;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

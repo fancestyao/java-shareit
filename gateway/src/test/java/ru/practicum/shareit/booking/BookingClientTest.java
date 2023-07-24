@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
-import ru.practicum.shareit.request.models.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.test.web.client.MockRestServiceServer;
 import ru.practicum.shareit.booking.client.BookingClient;
-import ru.practicum.shareit.booking.model.Booking;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.shareit.request.enums.Status.WAITING;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -35,8 +34,8 @@ public class BookingClientTest {
     @Test
     void setApproved() throws JsonProcessingException {
         boolean approved = true;
-        Booking booking = new Booking();
-        booking.setStatus(Status.WAITING);
+        BookingDtoIn booking = new BookingDtoIn();
+        booking.setStatus(WAITING);
         String response = objectMapper.writeValueAsString(booking);
         mockRestServiceServer.expect(requestTo("http://localhost:9090/bookings/1?approved=true"))
                 .andExpect(method(HttpMethod.PATCH))
@@ -52,7 +51,7 @@ public class BookingClientTest {
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(5))
                 .itemId(1L)
-                .status(Status.WAITING)
+                .status(WAITING)
                 .build();
         String requestJson = objectMapper.writeValueAsString(
                 bookingInputDto);
@@ -70,7 +69,7 @@ public class BookingClientTest {
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(5))
                 .itemId(1L)
-                .status(Status.WAITING)
+                .status(WAITING)
                 .build();
         String response = objectMapper.writeValueAsString(bookingInputDto);
         mockRestServiceServer.expect(requestTo("http://localhost:9090/bookings/1"))
@@ -87,13 +86,13 @@ public class BookingClientTest {
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(5))
                 .itemId(1L)
-                .status(Status.WAITING)
+                .status(WAITING)
                 .build();
         BookingDtoIn bookingInputDto2 = BookingDtoIn.builder()
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(5))
                 .itemId(1L)
-                .status(Status.WAITING)
+                .status(WAITING)
                 .build();
         String string = objectMapper.writeValueAsString(List.of(bookingInputDto1, bookingInputDto2));
         mockRestServiceServer.expect(requestTo("http://localhost:9090/bookings?state=ALL&from=0&size=3"))
@@ -112,13 +111,13 @@ public class BookingClientTest {
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(5))
                 .itemId(1L)
-                .status(Status.WAITING)
+                .status(WAITING)
                 .build();
         BookingDtoIn bookingInputDto2 = BookingDtoIn.builder()
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(5))
                 .itemId(1L)
-                .status(Status.WAITING)
+                .status(WAITING)
                 .build();
         String string = objectMapper.writeValueAsString(List.of(bookingInputDto1, bookingInputDto2));
         mockRestServiceServer.expect(requestTo("http://localhost:9090/bookings/owner?state=ALL&from=0&size=3"))

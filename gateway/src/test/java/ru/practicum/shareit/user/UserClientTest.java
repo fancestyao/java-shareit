@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import ru.practicum.shareit.user.client.UserClient;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.models.User;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -27,16 +26,19 @@ public class UserClientTest {
     private MockRestServiceServer mockRestServiceServer;
     @Autowired
     private ObjectMapper objectMapper;
-    private static User userOne;
+    private static UserDto userOne;
     private static UserDto userTwo;
 
     @BeforeEach
     void beforeEach() {
-        userOne = new User();
+        userOne = new UserDto();
         userOne.setId(1L);
-        userOne.setName("userdtoname");
-        userOne.setEmail("userdtoemail@mail.ru");
-        userTwo = new UserDto(2L, "userdtotwoemail@mail.ru", "userdtotwoname");
+        userOne.setName("userName");
+        userOne.setEmail("userEmail@mail.ru");
+        userTwo = new UserDto();
+        userTwo.setId(2L);
+        userTwo.setName("userdtotwoname");
+        userTwo.setEmail("userdtotwoemail@mail.ru");
     }
 
     @Test

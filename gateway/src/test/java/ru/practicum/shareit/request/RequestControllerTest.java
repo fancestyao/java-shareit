@@ -19,8 +19,7 @@ import ru.practicum.shareit.request.client.RequestClient;
 import ru.practicum.shareit.request.controllers.RequestController;
 import ru.practicum.shareit.request.dto.ItemRequestInputDto;
 import ru.practicum.shareit.request.dto.RequestDtoWithItems;
-import ru.practicum.shareit.request.models.Request;
-import ru.practicum.shareit.user.models.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,7 +37,6 @@ public class RequestControllerTest {
     private RequestClient requestClient;
     private MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private Request request;
     private ItemRequestInputDto itemRequestInputDto;
     private RequestDtoWithItems requestDtoWithItems;
     private static final String CUSTOM_USER_HEADER = "X-Sharer-User-Id";
@@ -47,32 +45,32 @@ public class RequestControllerTest {
     void beforeEach() {
         objectMapper.registerModule(new JavaTimeModule());
         mockMvc = MockMvcBuilders.standaloneSetup(requestController).build();
-        User user = new User();
-        user.setName("userName");
-        user.setEmail("userEmail@mail.ru");
-        user.setId(1L);
+        UserDto userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("userName");
+        userDto.setEmail("userEmail@mail.ru");
         itemRequestInputDto = new ItemRequestInputDto("itemRequestInputDtoDescription",
                 LocalDateTime.now());
-        request = new Request();
-        request.setRequester(user);
-        request.setDescription("requestDescription");
-        request.setCreated(LocalDateTime.now());
-        requestDtoWithItems = RequestDtoWithItems.builder().build();
-        requestDtoWithItems.setDescription("requestDtoWithItemsDescription");
+        requestDtoWithItems = RequestDtoWithItems
+                .builder()
+                .id(1L)
+                .description("requestDtoWithItemsDescription")
+                .created(LocalDateTime.now())
+                .build();
     }
 
     @Test
     void givenRequest_whenCreateRequest_thenExpectSameIdAndDescription() throws Exception {
         Mockito.when(requestClient.addRequest(Mockito.any(), Mockito.any()))
-                .thenReturn(ResponseEntity.ok().body(request));
+                .thenReturn(ResponseEntity.ok().body(requestDtoWithItems));
         mockMvc.perform(post("/requests")
                         .header(CUSTOM_USER_HEADER, 1)
                         .content(objectMapper.writeValueAsString(itemRequestInputDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(request.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(requestDtoWithItems.getId()), Long.class))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description",
-                        is(request.getDescription()), String.class));
+                        is(requestDtoWithItems.getDescription()), String.class));
     }
 
     @Test

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.practicum.shareit.request.models.Status;
+import ru.practicum.shareit.request.enums.Status;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;

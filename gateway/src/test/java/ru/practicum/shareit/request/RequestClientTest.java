@@ -13,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import ru.practicum.shareit.request.client.RequestClient;
 import ru.practicum.shareit.request.dto.ItemRequestInputDto;
-import ru.practicum.shareit.request.models.Request;
-import ru.practicum.shareit.user.models.User;
+import ru.practicum.shareit.request.dto.RequestDtoWithItems;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 
@@ -35,19 +35,20 @@ public class RequestClientTest {
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
-        User user = new User();
-        user.setName("testUser");
-        user.setEmail("test@email.ru");
-        user.setId(1L);
-        Request itemRequest = new Request();
-        itemRequest.setRequester(user);
-        itemRequest.setDescription("requestDescription");
-        itemRequest.setId(1L);
-        itemRequest.setCreated(LocalDateTime.now());
+        UserDto userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("userName");
+        userDto.setEmail("userEmail@mail.ru");
+        RequestDtoWithItems requestDtoWithItems = RequestDtoWithItems
+                .builder()
+                .id(1L)
+                .description("requestDescription")
+                .created(LocalDateTime.now())
+                .build();
         itemRequestInputDto = new ItemRequestInputDto("itemRequestInputDtoDescription",
                 LocalDateTime.now());
         request = objectMapper.writeValueAsString(itemRequestInputDto);
-        result = objectMapper.writeValueAsString(itemRequest);
+        result = objectMapper.writeValueAsString(requestDtoWithItems);
     }
 
     @Test
@@ -89,5 +90,4 @@ public class RequestClientTest {
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-
 }
